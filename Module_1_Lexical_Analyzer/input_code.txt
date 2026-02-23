@@ -1,1 +1,6 @@
-int x = 10;
+int main ( ) {
+    float balance = 100.50 ;
+    if ( balance > 50 ) {
+        return 1 ;
+    }
+}

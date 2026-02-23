@@ -20,14 +20,23 @@ public class Lexer
                 L = L.replace(")", " ) ");
                 L = L.replace("{", " { ");
                 L = L.replace("}", " } ");
+                L = L.replace("<", " < ");
+                L = L.replace(">", " > ");
+                L = L.replace("&&", " && ");
+                L = L.replace("||", " || ");
+                L = L.replace("+", " + ");
+                L = L.replace("-", " - ");
+                L = L.replace("*", " * ");
+                L = L.replace("/", " / ");
+                L = L.replace("%", " % ");
                 String[] words = L.trim().split("\\s+");
                 for (String w : words)
                 {
-                    if (w.equals("int")||w.equals("if")||w.equals("while")||w.equals("return"))
+                    if (w.equals("int")||w.equals("if")||w.equals("while")||w.equals("return")||w.equals("float")||w.equals("double")||w.equals("class")||w.equals("public"))
                     {
                         System.out.println("Token: "+w+" -> Type : KEYWORD");
                     }
-                    else if(w.equals("=")||w.equals(";")||w.equals("(")||w.equals(")")||w.equals("{")||w.equals("}"))
+                    else if(w.equals("=")||w.equals(";")||w.equals("(")||w.equals(")")||w.equals("{")||w.equals("}")||w.equals("<")||w.equals(">")||w.equals("&&")||w.equals("||")||w.equals("+")||w.equals("-")||w.equals("*")||w.equals("/")||w.equals("%"))
                     {
                         System.out.println("Token: "+w+" -> Type : OPERATOR");
                     }
