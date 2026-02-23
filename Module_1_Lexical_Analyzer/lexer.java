@@ -13,8 +13,34 @@ public class Lexer
             System.out.println("--- Reading Input ---");
             while (sc.hasNextLine()) 
             {
-                String l = sc.nextLine();
-                System.out.println(l);
+                String L = sc.nextLine();
+                L = L.replace("=", " = ");
+                L = L.replace(";", " ; ");
+                L = L.replace("(", " ( ");
+                L = L.replace(")", " ) ");
+                L = L.replace("{", " { ");
+                L = L.replace("}", " } ");
+                String[] words = L.trim().split("\\s+");
+                for (String w : words)
+                {
+                    if (w.equals("int")||w.equals("if")||w.equals("while")||w.equals("return"))
+                    {
+                        System.out.println("Token: "+w+" -> Type : KEYWORD");
+                    }
+                    else if(w.equals("=")||w.equals(";")||w.equals("(")||w.equals(")")||w.equals("{")||w.equals("}"))
+                    {
+                        System.out.println("Token: "+w+" -> Type : OPERATOR");
+                    }
+                    else if (Character.isDigit(w.charAt(0))) 
+                    {
+                        System.out.println("Token: "+w+" -> Type : NUMBER");
+                    }
+                    else
+                    {
+                        System.out.println("Token: "+w+" -> Type : IDENTIFIER");
+                    }
+                }
+                
             }
             sc.close();
         }
