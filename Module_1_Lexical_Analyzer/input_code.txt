@@ -1,14 +1,4 @@
-// Final Test Code for Module 1 Lexical Analyzer
-public class Calculator {
-    public static void main() {
-        float balance = 1000.50;
-        int withdrawal = 500;
-        
-        if (withdrawal <= balance && withdrawal > 0) {
-            balance = balance - withdrawal;
-            return 1;
-        } elseif (withdrawal == 0 || withdrawal < 0) {
-            return 0;
-        }
-    }
+public static void main() {
+    int a = 10;
+    int sum = a + 20;
 }
