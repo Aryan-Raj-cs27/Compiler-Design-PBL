@@ -33,7 +33,8 @@ public class RecursiveDescentParser
     public static int parseE() 
 	{
         int val = parseT();
-        while (peek() == '+' || peek() == '-') {
+        while (peek() == '+' || peek() == '-') 
+		{
             char op = peek();
             consume();
             if (op == '+') 
