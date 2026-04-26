@@ -21,7 +21,6 @@ bin/
 
 # Workspace files (user-local)
 *.code-workspace
-!COMPILER_DESIGN.code-workspace
 
 # Logs/temp
 *.log
