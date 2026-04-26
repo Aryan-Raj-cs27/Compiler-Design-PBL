@@ -39,13 +39,13 @@ Run from the repo root after compiling:
 Built-in demo input:
 
 ```bash
-java Module_1_Lexical_Analyzer.Lexer
+java -cp Module_1_Lexical_Analyzer Lexer
 ```
 
 Tokenize a specific file:
 
 ```bash
-java Module_1_Lexical_Analyzer.Lexer path\to\your_input.txt
+java -cp Module_1_Lexical_Analyzer Lexer path\to\your_input.txt
 ```
 
 Alternatively (inside the module folder):
@@ -53,13 +53,13 @@ Alternatively (inside the module folder):
 ```bash
 cd Module_1_Lexical_Analyzer
 javac Lexer.java
-java Module_1_Lexical_Analyzer.Lexer
+java Lexer
 ```
 
 ### Modules 2 & 3 — Recursive Descent Parser
 
 ```bash
-java Module_2_and_3_Syntax_Parser.RecursiveDescentParser
+java -cp Module_2_and_3_Syntax_Parser RecursiveDescentParser
 ```
 
 ### Module 4 — TAC Generator

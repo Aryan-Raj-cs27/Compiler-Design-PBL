@@ -1,5 +1,3 @@
-package Module_1_Lexical_Analyzer;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
