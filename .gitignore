@@ -12,7 +12,9 @@ target/
 bin/
 
 # IDE/editor local files
-.vscode/
+# Keep the repo clean, but allow a minimal shared VS Code Java config.
+.vscode/*
+!.vscode/settings.json
 .idea/
 *.iml
 .classpath
