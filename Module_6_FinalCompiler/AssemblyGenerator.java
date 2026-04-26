@@ -1,3 +1,5 @@
+package Module_6_FinalCompiler;
+
 public class AssemblyGenerator {
 	/**
 	 * Converts a small set of TAC instructions into dummy x86-like assembly and prints it.
