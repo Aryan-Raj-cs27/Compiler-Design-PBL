@@ -1,6 +1,3 @@
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 public class DAGOptimizer {
 	public static void main(String[] args) {
 		String[] tac = {
@@ -25,39 +22,44 @@ public class DAGOptimizer {
 	}
 
 	public static String[] optimizeBlock(String[] tac) {
-		// This lightweight simulation tracks repeated expressions inside a basic block.
-		// The goal is to show common subexpression elimination in a student-friendly way.
-		Map<String, String> expressionToTemp = new LinkedHashMap<>();
+		// The optimizer is intentionally SIMPLE and STRING-BASED for presentation.
+		// We simulate a DAG idea by remembering expressions we've already computed.
+		//
+		// For the professor's block:
+		//   t1=a*b
+		//   t2=t1+c
+		//   t3=a*b+d
+		// The common subexpression is: a*b (already computed into t1).
+		// So we rewrite the redundant part in the third instruction:
+		//   t3=a*b+d  --->  t3=t1+d
+
 		String[] optimized = new String[tac.length];
+		String knownMulExpression = null; // e.g., "a*b"
+		String knownMulTemp = null;       // e.g., "t1"
 
 		for (int i = 0; i < tac.length; i++) {
 			String instruction = tac[i];
 			String[] parts = instruction.split("=");
-			String target = parts[0];
-			String rhs = parts[1];
+			String lhs = parts[0].trim();
+			String rhs = parts[1].trim();
 
-			if (rhs.contains("*")) {
-				String[] addParts = rhs.split("\\+");
-				String multipliedPart = addParts[0];
-				String remainder = addParts.length > 1 ? "+" + addParts[1] : "";
-
-				String normalizedExpression = multipliedPart;
-				if (expressionToTemp.containsKey(normalizedExpression)) {
-					rhs = expressionToTemp.get(normalizedExpression) + remainder;
-				} else {
-					expressionToTemp.put(normalizedExpression, target);
-				}
+			// Record the first multiplication we see (t1=a*b).
+			if (rhs.contains("*") && !rhs.contains("+")) {
+				knownMulExpression = rhs; // "a*b"
+				knownMulTemp = lhs;       // "t1"
+				optimized[i] = lhs + "=" + rhs;
+				continue;
 			}
 
-			if (rhs.equals("a*b")) {
-				expressionToTemp.put("a*b", target);
+			// Apply CSE for the pattern "a*b+d".
+			if (knownMulExpression != null && rhs.startsWith(knownMulExpression + "+")) {
+				String remainder = rhs.substring((knownMulExpression + "+").length()); // "d"
+				rhs = knownMulTemp + "+" + remainder; // "t1+d"
 			}
 
-			optimized[i] = target + "=" + rhs;
+			optimized[i] = lhs + "=" + rhs;
 		}
 
-		// The exact professor-required result is t1=a*b; t2=t1+c; t3=t1+d.
-		optimized[2] = "t3=t1+d";
 		return optimized;
 	}
 }
