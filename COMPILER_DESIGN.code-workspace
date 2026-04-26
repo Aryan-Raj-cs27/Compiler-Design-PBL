@@ -1,0 +1,18 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "java.project.sourcePaths": [
+      "."
+    ],
+    "java.project.outputPath": "out",
+
+    "files.exclude": {
+      "**/*.class": true,
+      "out": true
+    }
+  }
+}
