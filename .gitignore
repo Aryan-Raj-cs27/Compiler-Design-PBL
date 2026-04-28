@@ -32,3 +32,4 @@ Thumbs.db
 
 # Local context/private notes not needed in remote repo
 .github/context/
+repopack-output.*
