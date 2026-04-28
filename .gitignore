@@ -25,6 +25,7 @@ bin/
 # Logs/temp
 *.log
 *.tmp
+repomix-output.xml
 
 # OS noise
 .DS_Store
