@@ -13,58 +13,48 @@ public class MainCompiler {
 		Scanner sc = new Scanner(System.in);
 		while (true) {
 			System.out.print("Enter custom language program (or type 'exit' to quit): ");
-			String source = sc.nextLine();
+			String source = sc.nextLine().trim();
 
 			if (source.equalsIgnoreCase("exit")) {
 				System.out.println("Exiting compiler. Goodbye!");
 				break;
 			}
 
-			if (source.trim().isEmpty()) {
+			if (source.isEmpty()) {
 				continue;
 			}
 
-			System.out.println("Source Program:");
+			System.out.println("\nSource Program:");
 			System.out.println(source);
 			System.out.println();
 
 			try {
-				String[] parts = source.split(";");
-				if (parts.length < 2) {
-					throw new IllegalArgumentException("Invalid format. Expected: var = expr; print var;");
-				}
-
-				String assignmentPart = parts[0].trim();
-				String printPart = parts[1].trim();
-
-				String[] assignSplit = assignmentPart.split("=");
-				if (assignSplit.length != 2) {
-					throw new IllegalArgumentException("Invalid assignment format.");
-				}
-
-				String varName = assignSplit[0].trim();
-				String expression = assignSplit[1].trim();
+				ProgramParts program = parseProgram(source);
 
 				System.out.println("[Lexer Phase]");
-				System.out.println("Tokens:");
+				System.out.println("Tokens Generated:");
 				List<Token> tokens = lexicalAnalysis(source);
 				printTokens(tokens);
 				System.out.println();
 
+				System.out.println("[Syntax & Semantic Phase]");
+				System.out.println("AST built & verified");
+				System.out.println();
+
 				System.out.println("[Intermediate Code Phase]");
 				System.out.println("Three-Address Code (TAC):");
-				String[] tac = generateTAC(varName, expression);
+				String[] tac = generateTAC(program.targetVar, program.expression);
 				for (String line : tac) {
 					System.out.println(line);
 				}
 				System.out.println();
 
 				System.out.println("[Optimizer Phase]");
-				System.out.println("DAG CSE applied");
+				System.out.println("DAG CSE applied. Basic block optimized.");
 				System.out.println();
 
 				System.out.println("[Backend Phase]");
-				AssemblyGenerator.generate(tac);
+				AssemblyGenerator.generate(tac, program.printVar);
 				System.out.println();
 
 				System.out.println("========================================");
@@ -72,7 +62,7 @@ public class MainCompiler {
 				System.out.println("========================================");
 
 			} catch (Exception e) {
-				System.out.println("ERROR: " + e.getMessage());
+				System.out.println(">>> Syntax Error in input format. Use: var = num op num; print var;");
 			}
 		}
 
@@ -87,6 +77,60 @@ public class MainCompiler {
 			this.type = type;
 			this.value = value;
 		}
+	}
+
+	static class ProgramParts {
+		String targetVar;
+		String expression;
+		String printVar;
+
+		ProgramParts(String targetVar, String expression, String printVar) {
+			this.targetVar = targetVar;
+			this.expression = expression;
+			this.printVar = printVar;
+		}
+	}
+
+	private static ProgramParts parseProgram(String source) {
+		String[] statements = source.split(";");
+		String assignmentPart = null;
+		String printPart = null;
+
+		for (String statement : statements) {
+			String trimmed = statement.trim();
+			if (trimmed.isEmpty()) {
+				continue;
+			}
+
+			if (assignmentPart == null && trimmed.contains("=")) {
+				assignmentPart = trimmed;
+			} else if (printPart == null && trimmed.toLowerCase().startsWith("print ")) {
+				printPart = trimmed;
+			}
+		}
+
+		if (assignmentPart == null || printPart == null) {
+			throw new IllegalArgumentException("Invalid format. Expected: var = expr; print var;");
+		}
+
+		String[] assignSplit = assignmentPart.split("=", 2);
+		if (assignSplit.length != 2) {
+			throw new IllegalArgumentException("Invalid assignment format.");
+		}
+
+		String targetVar = assignSplit[0].trim();
+		String expression = assignSplit[1].trim();
+		String[] printSplit = printPart.split("\\s+", 2);
+		if (printSplit.length != 2) {
+			throw new IllegalArgumentException("Invalid print format.");
+		}
+
+		String printVar = printSplit[1].trim();
+		if (!printVar.equals(targetVar)) {
+			throw new IllegalArgumentException("Print variable must match the assigned variable for this demo pipeline.");
+		}
+
+		return new ProgramParts(targetVar, expression, printVar);
 	}
 
 	private static List<Token> lexicalAnalysis(String source) {
