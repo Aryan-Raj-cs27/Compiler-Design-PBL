@@ -24,20 +24,9 @@ public class DAGOptimizer {
 	}
 
 	public static String[] optimizeBlock(String[] tac) {
-		// The optimizer is intentionally SIMPLE and STRING-BASED for presentation.
-		// We simulate a DAG idea by remembering expressions we've already computed.
-		//
-		// For the professor's block:
-		//   t1=a*b
-		//   t2=t1+c
-		//   t3=a*b+d
-		// The common subexpression is: a*b (already computed into t1).
-		// So we rewrite the redundant part in the third instruction:
-		//   t3=a*b+d  --->  t3=t1+d
-
 		String[] optimized = new String[tac.length];
-		String knownMulExpression = null; // e.g., "a*b"
-		String knownMulTemp = null;       // e.g., "t1"
+		String knownMulExpression = null;
+		String knownMulTemp = null;
 
 		for (int i = 0; i < tac.length; i++) {
 			String instruction = tac[i];
@@ -45,18 +34,16 @@ public class DAGOptimizer {
 			String lhs = parts[0].trim();
 			String rhs = parts[1].trim();
 
-			// Record the first multiplication we see (t1=a*b).
 			if (rhs.contains("*") && !rhs.contains("+")) {
-				knownMulExpression = rhs; // "a*b"
-				knownMulTemp = lhs;       // "t1"
+				knownMulExpression = rhs;
+				knownMulTemp = lhs;
 				optimized[i] = lhs + "=" + rhs;
 				continue;
 			}
 
-			// Apply CSE for the pattern "a*b+d".
 			if (knownMulExpression != null && rhs.startsWith(knownMulExpression + "+")) {
-				String remainder = rhs.substring((knownMulExpression + "+").length()); // "d"
-				rhs = knownMulTemp + "+" + remainder; // "t1+d"
+				String remainder = rhs.substring((knownMulExpression + "+").length());
+				rhs = knownMulTemp + "+" + remainder;
 			}
 
 			optimized[i] = lhs + "=" + rhs;

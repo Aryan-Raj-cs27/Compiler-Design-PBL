@@ -54,10 +54,6 @@ public class Lexer
         {
             System.out.println("--- Lexical Analysis (Module 1) ---");
 
-            // To make this project work on ANY computer after download:
-            // - If a file path is provided, tokenize that file.
-            // - Otherwise, tokenize a small built-in demo program.
-
             if (args.length > 0) {
                 File inputFile = new File(args[0]);
                 tokenizeFromScanner(new Scanner(inputFile));
@@ -88,7 +84,6 @@ public class Lexer
             return;
         }
 
-        // Add whitespace around operators/punctuators so split() works.
         L = L.replace("=", " = ");
         L = L.replace(";", " ; ");
         L = L.replace("(", " ( ");
@@ -105,7 +100,6 @@ public class Lexer
         L = L.replace("/", " / ");
         L = L.replace("%", " % ");
 
-        // Fix accidental spacing for multi-character operators after initial replaces.
         L = L.replace(" =  = ", " == ");
         L = L.replace(" <  = ", " <= ");
         L = L.replace(" >  = ", " >= ");

@@ -10,10 +10,6 @@ public class TACGenerator {
 	public static void main(String[] args) {
 		System.out.println("--- Module 4: TAC Generation ---");
 
-		// IMPORTANT (as per Dr. Shanu's instructions):
-		// We are manually constructing ASTs here to simulate what a parser would output.
-		// Then we generate TAC using a STRICT post-order traversal (Left, Right, Root).
-
 		System.out.println("Input Expression: 2*3+4");
 		tacInstructions.clear();
 		tempCounter = 1;
@@ -32,13 +28,6 @@ public class TACGenerator {
 	}
 
 	private static ASTNode buildTwoTimesThreePlusFourAst() {
-		// Expression: 2*3+4
-		// AST (conceptually):
-		//        +
-		//      /   \
-		//     *     4
-		//   /   \
-		//  2     3
 		ASTNode two = new ASTNode("2", false);
 		ASTNode three = new ASTNode("3", false);
 		ASTNode four = new ASTNode("4", false);
@@ -48,13 +37,6 @@ public class TACGenerator {
 	}
 
 	private static ASTNode buildParenthesizedAdditionTimesFourAst() {
-		// Expression: (2+3)*4
-		// AST (conceptually):
-		//        *
-		//      /   \
-		//     +     4
-		//   /   \
-		//  2     3
 		ASTNode two = new ASTNode("2", false);
 		ASTNode three = new ASTNode("3", false);
 		ASTNode four = new ASTNode("4", false);
@@ -68,8 +50,6 @@ public class TACGenerator {
 			return "";
 		}
 
-		// STRICT post-order traversal: Left subtree, Right subtree, then Root.
-		// This guarantees operands are handled before the operator emits a TAC line.
 		String leftResult = generateTAC(node.left);
 		String rightResult = generateTAC(node.right);
 
@@ -77,12 +57,8 @@ public class TACGenerator {
 			return node.value;
 		}
 
-		// When traversal reaches an operator, the two operands are already resolved.
-		// So we can create a new temporary (t1, t2, ...) and emit a TAC instruction.
 		String tempName = "t" + tempCounter++;
 
-		// Output format aligned with Dr. Shanu's examples (no extra spaces):
-		// e.g., t1=2*3
 		String instruction = tempName + "=" + leftResult + node.value + rightResult;
 		tacInstructions.add(instruction);
 		return tempName;

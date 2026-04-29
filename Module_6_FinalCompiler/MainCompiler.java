@@ -29,8 +29,6 @@ public class MainCompiler {
 			System.out.println();
 
 			try {
-				// Parse input format: var = val1 op val2; print var;
-				// Extract assignment and print parts
 				String[] parts = source.split(";");
 				if (parts.length < 2) {
 					throw new IllegalArgumentException("Invalid format. Expected: var = expr; print var;");
@@ -39,7 +37,6 @@ public class MainCompiler {
 				String assignmentPart = parts[0].trim();
 				String printPart = parts[1].trim();
 
-				// Parse assignment: var = expression
 				String[] assignSplit = assignmentPart.split("=");
 				if (assignSplit.length != 2) {
 					throw new IllegalArgumentException("Invalid assignment format.");
@@ -48,14 +45,12 @@ public class MainCompiler {
 				String varName = assignSplit[0].trim();
 				String expression = assignSplit[1].trim();
 
-				// -------------------- Lexer Phase --------------------
 				System.out.println("[Lexer Phase]");
 				System.out.println("Tokens:");
 				List<Token> tokens = lexicalAnalysis(source);
 				printTokens(tokens);
 				System.out.println();
 
-				// -------------- Intermediate Code Phase ---------------
 				System.out.println("[Intermediate Code Phase]");
 				System.out.println("Three-Address Code (TAC):");
 				String[] tac = generateTAC(varName, expression);
@@ -64,12 +59,10 @@ public class MainCompiler {
 				}
 				System.out.println();
 
-				// ------------------- Optimizer Phase ------------------
 				System.out.println("[Optimizer Phase]");
 				System.out.println("DAG CSE applied");
 				System.out.println();
 
-				// ------------------- Backend Phase --------------------
 				System.out.println("[Backend Phase]");
 				AssemblyGenerator.generate(tac);
 				System.out.println();
@@ -86,7 +79,6 @@ public class MainCompiler {
 		sc.close();
 	}
 
-	// Token class for lexical analysis
 	static class Token {
 		String type;
 		String value;
@@ -97,11 +89,9 @@ public class MainCompiler {
 		}
 	}
 
-	// Lexical Analysis: tokenize source code dynamically
 	private static List<Token> lexicalAnalysis(String source) {
 		List<Token> tokens = new ArrayList<>();
 
-		// Add spaces around operators and punctuation for easy splitting
 		String normalized = source
 				.replace("=", " = ")
 				.replace(";", " ; ")
@@ -123,7 +113,6 @@ public class MainCompiler {
 		return tokens;
 	}
 
-	// Classify a single word into a token type
 	private static Token classifyToken(String word) {
 		if (word.equals("print")) {
 			return new Token("PRINT", word);
@@ -146,7 +135,6 @@ public class MainCompiler {
 		}
 	}
 
-	// Print tokens in the format: <TYPE,value> <TYPE,value> ...
 	private static void printTokens(List<Token> tokens) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < tokens.size(); i++) {
@@ -157,11 +145,9 @@ public class MainCompiler {
 		System.out.println(sb.toString());
 	}
 
-	// Generate Three-Address Code dynamically from parsed expression
 	private static String[] generateTAC(String varName, String expression) {
 		List<String> tac = new ArrayList<>();
 
-		// Tokenize the expression
 		String normalized = expression
 				.replace("+", " + ")
 				.replace("-", " - ")
@@ -171,11 +157,9 @@ public class MainCompiler {
 		String[] tokens = normalized.trim().split("\\s+");
 
 		if (tokens.length == 1) {
-			// Simple assignment: var = value
 			tac.add(varName + "=" + tokens[0]);
 
 		} else if (tokens.length == 3) {
-			// Single binary operation: val1 op val2
 			String val1 = tokens[0];
 			String op = tokens[1];
 			String val2 = tokens[2];
@@ -184,34 +168,28 @@ public class MainCompiler {
 			tac.add(varName + "=t1");
 
 		} else if (tokens.length == 5) {
-			// Two operators: val1 op1 val2 op2 val3
-			// Handle operator precedence: * and / before + and -
 			String val1 = tokens[0];
 			String op1 = tokens[1];
 			String val2 = tokens[2];
 			String op2 = tokens[3];
 			String val3 = tokens[4];
 
-			// Check precedence: if op1 has higher or equal precedence than op2
 			if (hasHigherOrEqualPrecedence(op1, op2)) {
 				tac.add("t1=" + val1 + op1 + val2);
 				tac.add("t2=t1" + op2 + val3);
 			} else {
-				// op2 has higher precedence, compute it first
 				tac.add("t1=" + val2 + op2 + val3);
 				tac.add("t2=" + val1 + op1 + "t1");
 			}
 			tac.add(varName + "=t2");
 
 		} else {
-			// Fallback: simple assignment
 			tac.add(varName + "=" + expression);
 		}
 
 		return tac.toArray(new String[0]);
 	}
 
-	// Helper: check operator precedence
 	private static boolean hasHigherOrEqualPrecedence(String op1, String op2) {
 		int prec1 = getPrecedence(op1);
 		int prec2 = getPrecedence(op2);
